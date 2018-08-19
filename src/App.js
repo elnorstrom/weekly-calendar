@@ -29,6 +29,9 @@ class App extends Component {
       .then(() => this.updateWeek())
   };
 
+  // Sets up the current week with the use of moment.js, 
+  // it also shifts the week forwards or backwords 7 days depending on which
+  // button was clicked
   updateWeek(e) {
     let whichButton;
     let addOrSubtract = 0;
@@ -66,6 +69,8 @@ class App extends Component {
   };
 
   addEvents() {
+    // Restructures the API data to an object called eventsByDate,
+    // with the dates set as keys
     let eventsByDate = {}
 
     this.state.data.forEach((obj) => {
@@ -81,6 +86,8 @@ class App extends Component {
       eventsByDate: eventsByDate
     }));
 
+    // Matches any events in the eventsByDate object to the
+    // week that is currently displayed, storing them in the eventsForTheWeek array
     let eventsForTheWeek = [];
 
     this.state.isoDays.forEach((date => {
@@ -98,6 +105,8 @@ class App extends Component {
     this.setEventsByDay();
   };
 
+  // Picking out the labels and times from the eventsForTheWeek,
+  // Storing them in the labels array with some light formatting
   setEventsByDay() {
     let labels = [];
     this.state.eventsForTheWeek.forEach((arr) => {
