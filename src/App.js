@@ -9,7 +9,7 @@ class App extends Component {
     this.addEvents = this.addEvents.bind(this);
     this.setEventsByDay = this.setEventsByDay.bind(this);
     this.state = {
-      data: {},
+      calendarDataFromApi: {},
       currentWeek: [],
       isoDays: [],
       weekCounter: 0,
@@ -24,7 +24,7 @@ class App extends Component {
       method: 'GET'
     }).then(response => response.json())
       .then((result) => {
-        this.setState(() => ({ data: result }))
+        this.setState(() => ({ calendarDataFromApi: result }))
       })
       .then(() => this.updateWeek())
   };
@@ -32,21 +32,11 @@ class App extends Component {
   // Sets up the current week with the use of moment.js, 
   // it also shifts the week forwards or backwords 7 days depending on which
   // button was clicked
-  updateWeek(e) {
-    let whichButton;
-    let addOrSubtract = 0;
-    let startOfWeek;
-    let endOfWeek;
-   
-    if (e) {
-      whichButton = e.target.value;
-      addOrSubtract = whichButton === 'previous-week' ? -7 : +7;
-      startOfWeek = moment().startOf('isoWeek').add(this.state.weekCounter + addOrSubtract, 'd');
-      endOfWeek = moment().endOf('isoWeek').add(this.state.weekCounter + addOrSubtract, 'd');
-    } else {
-        startOfWeek = moment().startOf('isoWeek');
-        endOfWeek = moment().endOf('isoWeek');
-      }
+  updateWeek(numberOfDays) {
+
+    let addOrSubtract = numberOfDays ? numberOfDays : 0;
+    let startOfWeek = moment().startOf('isoWeek').add(this.state.weekCounter + addOrSubtract, 'd');
+    let endOfWeek = moment().endOf('isoWeek').add(this.state.weekCounter + addOrSubtract, 'd');
       
     let day = startOfWeek;
     let week = [];
@@ -73,7 +63,7 @@ class App extends Component {
     // with the dates set as keys
     let eventsByDate = {}
 
-    this.state.data.forEach((obj) => {
+    this.state.calendarDataFromApi.forEach((obj) => {
       let currentObjectKey = obj.start.substr(0, 10);
       if (!eventsByDate[currentObjectKey]) {
         eventsByDate[currentObjectKey] = [obj];
@@ -127,8 +117,8 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Weekly Calendar</h1>
         </header>
-        <button value="previous-week" onClick={this.updateWeek}>Previous Week</button>
-        <button value="next-week" onClick={this.updateWeek}>Next Week</button>
+        <button onClick={() => this.updateWeek(-7)}>Previous Week</button>
+        <button onClick={() => this.updateWeek(7)}>Next Week</button>
         <div className="weekly-calendar--flex">
           <div>
             {this.state.currentWeek[0]}<br /><hr />
